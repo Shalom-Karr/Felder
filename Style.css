@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Libre+Baskerville:wght@700&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #e8e8e8;
+  font-family: Inter, system-ui, sans-serif;
+  color: #111;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.page {
+  max-width: 560px;
+  margin: 20px auto;
+  background: white;
+  border: 2px solid #111;
+}
+
+.top {
+  background: #111;
+  color: white;
+  padding: 32px 24px 24px;
+}
+
+.top h1 {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 3.2rem;
+  line-height: 0.8;
+  letter-spacing: -0.04em;
+}
+
+.top p {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+.content section {
+  padding: 18px 24px;
+  border-bottom: 2px solid #111;
+}
+
+.content section:last-child {
+  border-bottom: none;
+}
+
+.label {
+  background: #111;
+  color: white;
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  margin-bottom: 12px;
+}
+
+.item {
+  margin-bottom: 12px;
+}
+
+.item:last-child { margin-bottom: 0; }
+
+.item h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.item h3 a {
+  color: #111;
+  text-decoration: none;
+  border-bottom: 1px solid #aaa;
+}
+
+.intro, .item p, ul li, section p {
+  font-size: 0.92rem;
+}
+
+ul {
+  list-style: none;
+}
+
+ul li {
+  padding-left: 12px;
+  position: relative;
+  margin-bottom: 4px;
+}
+
+ul li::before {
+  content: "–";
+  position: absolute;
+  left: 0;
+  color: #666;
+}
+
+@media (max-width: 500px) {
+  .page { margin: 0; border: none; }
+  .top h1 { font-size: 2.6rem; }
+  .content section { padding: 16px 18px; }
+}
