@@ -1,110 +1,1225 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Yechiel</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#eeeae0">
+<title>Yechiel — Personal Universe</title>
+
+<style>
+:root {
+  --paper: #eeeae0;
+  --ink: #151515;
+  --blue: #494bff;
+  --orange: #ff7138;
+  --lime: #d6ff52;
+  --pink: #ff72b6;
+  --line: rgba(21,21,21,.24);
+  --gutter: clamp(18px,4vw,55px);
+}
+
+* { box-sizing:border-box; margin:0; padding:0; }
+
+html { scroll-behavior:smooth; }
+
+body {
+  background:var(--paper);
+  color:var(--ink);
+  font-family:Arial,Helvetica,sans-serif;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+button,a { color:inherit; font:inherit; }
+button { cursor:pointer; }
+a { text-decoration:none; }
+img { width:100%; height:100%; object-fit:cover; display:block; }
+
+::selection { background:var(--lime); color:var(--ink); }
+
+body::before {
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:100;
+  pointer-events:none;
+  opacity:.10;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E");
+}
+
+button:focus-visible,a:focus-visible {
+  outline:3px solid var(--blue);
+  outline-offset:4px;
+}
+
+.topbar {
+  position:sticky;
+  top:0;
+  z-index:50;
+  padding:15px var(--gutter);
+  background:rgba(238,234,224,.91);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+}
+
+.logo {
+  font-size:14px;
+  font-weight:950;
+  letter-spacing:-.07em;
+}
+
+.top-right { display:flex; align-items:center; gap:14px; }
+
+.status {
+  font-size:9px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+
+.status i {
+  display:inline-block;
+  width:7px;height:7px;
+  border-radius:50%;
+  background:#45b75b;
+  margin-right:5px;
+  animation:pulse 1.5s infinite;
+}
+
+.menu-button,.back-button {
+  border:1px solid var(--ink);
+  border-radius:50px;
+  background:transparent;
+  padding:10px 15px;
+  font-size:11px;
+  font-weight:800;
+}
+
+.progress {
+  position:fixed;
+  z-index:80;
+  top:0;left:0;
+  height:4px;
+  width:0;
+  background:var(--blue);
+}
+
+#app { min-height:90vh; }
+
+.view { display:none; }
+.view.active { display:block; animation:page-enter .65s cubic-bezier(.2,.8,.2,1) both; }
+
+.wrap { padding-left:var(--gutter); padding-right:var(--gutter); }
+
+.eyebrow {
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.13em;
+  font-weight:800;
+}
+
+.muted { color:#77746c; }
+
+.rule { height:1px; background:var(--line); }
+
+.big-title {
+  font-size:clamp(68px,15vw,190px);
+  line-height:.77;
+  font-weight:950;
+  letter-spacing:-.105em;
+  text-transform:uppercase;
+  overflow-wrap:anywhere;
+}
+
+.section { padding-top:100px; padding-bottom:100px; }
+
+.section-head {
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:18px;
+  margin-bottom:38px;
+}
+
+.section-head h2 {
+  font-size:clamp(40px,8vw,92px);
+  line-height:.88;
+  letter-spacing:-.08em;
+  text-transform:uppercase;
+  margin-top:17px;
+}
+
+.reveal {
+  opacity:0;
+  transform:translateY(35px);
+  transition:opacity .8s ease,transform .8s cubic-bezier(.2,.8,.2,1);
+}
+
+.reveal.in {
+  opacity:1;
+  transform:translateY(0);
+}
+
+.delay1 { transition-delay:.12s; }
+.delay2 { transition-delay:.23s; }
+.delay3 { transition-delay:.34s; }
+
+/* HOME COVER */
+
+.hero {
+  position:relative;
+  overflow:hidden;
+  min-height:84svh;
+  padding-top:30px;
+  padding-bottom:35px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+.hero-top,.hero-bottom {
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  align-items:center;
+}
+
+.hero-main {
+  position:relative;
+  padding:65px 0;
+}
+
+.hero h1 {
+  position:relative;
+  z-index:2;
+  font-size:clamp(78px,18vw,225px);
+  font-weight:950;
+  line-height:.72;
+  letter-spacing:-.115em;
+  text-transform:uppercase;
+}
+
+.hero h1 span {
+  display:block;
+  overflow:hidden;
+  padding-bottom:.12em;
+}
+
+.hero h1 b {
+  display:block;
+  animation:word-in 1s cubic-bezier(.16,1,.3,1) both;
+}
+
+.hero h1 span:nth-child(2) b { animation-delay:.13s; }
+
+.hero-art {
+  position:absolute;
+  right:3%;
+  top:4%;
+  width:clamp(105px,22vw,270px);
+  aspect-ratio:1;
+  border-radius:50%;
+  background:var(--orange);
+  display:grid;
+  place-items:center;
+  transform:rotate(-12deg);
+  animation:orbit 12s linear infinite;
+}
+
+.hero-art span {
+  font-size:clamp(65px,13vw,150px);
+  font-weight:900;
+}
+
+.hero-sub {
+  font-size:clamp(13px,2vw,19px);
+  max-width:390px;
+  line-height:1.5;
+}
+
+.hero-index {
+  font-size:10px;
+  font-weight:800;
+  border:1px solid var(--ink);
+  border-radius:50%;
+  width:62px;height:62px;
+  display:grid;place-items:center;
+  animation:bob 2.5s ease-in-out infinite;
+}
+
+.marquee {
+  background:var(--lime);
+  border-top:1px solid var(--ink);
+  border-bottom:1px solid var(--ink);
+  overflow:hidden;
+  padding:17px 0;
+}
+
+.marquee-track {
+  display:flex;
+  width:max-content;
+  animation:marquee 22s linear infinite;
+}
+
+.marquee span {
+  white-space:nowrap;
+  font-size:clamp(27px,5vw,55px);
+  font-weight:950;
+  letter-spacing:-.06em;
+  padding-right:30px;
+  text-transform:uppercase;
+}
+
+/* PURSUIT CARDS */
+
+.pursuits {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+
+.pursuit {
+  position:relative;
+  text-align:left;
+  min-width:0;
+  border:1px solid var(--ink);
+  padding:0;
+  overflow:hidden;
+  background:var(--paper);
+  transition:transform .35s cubic-bezier(.2,.8,.2,1);
+}
+
+.pursuit:hover { transform:translateY(-6px) rotate(-.5deg); }
+
+.pursuit:active { transform:scale(.975); }
+
+.pursuit-visual {
+  aspect-ratio:4/3;
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  place-items:center;
+}
+
+.pursuit-visual img {
+  position:absolute;
+  inset:0;
+  transition:transform .9s cubic-bezier(.2,.8,.2,1);
+}
+
+.pursuit:hover .pursuit-visual img { transform:scale(1.08) rotate(1deg); }
+
+.pursuit-visual .symbol {
+  position:relative;
+  z-index:1;
+  font-size:clamp(65px,13vw,150px);
+  font-weight:950;
+  letter-spacing:-.1em;
+  transition:transform .5s;
+}
+
+.pursuit:hover .symbol { transform:rotate(-10deg) scale(1.12); }
+
+.outdoors { background:#c3ef87; }
+.mechanics { background:#ff8a4c; }
+.music { background:#a5a0ff; }
+.creative { background:#ff9ecb; }
+
+.pursuit-meta {
+  padding:13px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  border-top:1px solid var(--ink);
+}
+
+.pursuit-meta small {
+  display:block;
+  font-size:9px;
+  letter-spacing:.1em;
+  margin-bottom:8px;
+}
+
+.pursuit-meta h3 {
+  font-size:clamp(19px,4vw,35px);
+  line-height:.95;
+  letter-spacing:-.07em;
+  text-transform:uppercase;
+}
+
+.card-arrow {
+  width:37px;height:37px;
+  flex-shrink:0;
+  display:grid;place-items:center;
+  border:1px solid var(--ink);
+  border-radius:50%;
+  font-size:21px;
+  transition:background .3s,color .3s,transform .3s;
+}
+
+.pursuit:hover .card-arrow {
+  background:var(--ink);
+  color:white;
+  transform:rotate(45deg);
+}
+
+/* OTHER HOME SECTIONS */
+
+.intro-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:30px;
+  align-items:start;
+}
+
+.intro-text {
+  font-size:clamp(24px,4vw,46px);
+  font-weight:800;
+  letter-spacing:-.055em;
+  line-height:1.05;
+}
+
+.body-copy { font-size:14px; line-height:1.85; }
+
+.home-stamp {
+  display:inline-block;
+  padding:12px 16px;
+  border:1px solid var(--ink);
+  margin-top:22px;
+  transform:rotate(-4deg);
+  font-size:10px;
+  font-weight:800;
+}
+
+.archive {
+  border-top:1px solid var(--ink);
+}
+
+.archive-row {
+  padding:22px 0;
+  border-bottom:1px solid var(--line);
+  display:grid;
+  grid-template-columns:55px 1fr 35px;
+  gap:12px;
+  align-items:center;
+}
+
+.archive-row strong {
+  font-size:clamp(20px,4vw,38px);
+  letter-spacing:-.06em;
+}
+
+.archive-row .arrow { font-size:24px; }
+
+/* DEDICATED PURSUIT PAGES */
+
+.detail-hero {
+  min-height:62svh;
+  padding-top:35px;
+  padding-bottom:45px;
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+.detail-hero .detail-name {
+  font-size:clamp(68px,16vw,190px);
+  font-weight:950;
+  letter-spacing:-.105em;
+  line-height:.78;
+  text-transform:uppercase;
+  overflow-wrap:anywhere;
+  position:relative;
+  z-index:2;
+  margin-top:55px;
+}
+
+.detail-symbol {
+  position:absolute;
+  right:5%;
+  top:20%;
+  width:clamp(110px,24vw,290px);
+  aspect-ratio:1;
+  border:2px solid var(--ink);
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-size:clamp(65px,13vw,150px);
+  animation:orbit 18s linear infinite;
+}
+
+.detail-hero .detail-description {
+  max-width:430px;
+  font-size:clamp(14px,2vw,19px);
+  line-height:1.6;
+  margin-top:28px;
+}
+
+.detail-content {
+  padding-top:75px;
+  padding-bottom:75px;
+}
+
+.detail-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+
+.detail-panel {
+  border:1px solid var(--ink);
+  padding:22px;
+  min-height:180px;
+}
+
+.detail-panel h3 {
+  font-size:clamp(22px,4vw,40px);
+  line-height:1;
+  letter-spacing:-.06em;
+  margin:22px 0 12px;
+}
+
+.detail-panel p {
+  font-size:13px;
+  line-height:1.8;
+}
+
+.detail-photo {
+  aspect-ratio:4/3;
+  overflow:hidden;
+  background:#ddd;
+  position:relative;
+}
+
+.detail-photo img {
+  transition:transform .8s;
+}
+
+.detail-photo:hover img { transform:scale(1.06); }
+
+.detail-photo figcaption {
+  position:absolute;
+  bottom:0;left:0;
+  padding:10px;
+  background:var(--paper);
+  font-size:10px;
+  font-weight:800;
+}
+
+.detail-copy {
+  max-width:680px;
+  font-size:clamp(20px,3.5vw,37px);
+  line-height:1.2;
+  letter-spacing:-.045em;
+  font-weight:750;
+}
+
+.detail-footer {
+  padding-top:25px;
+  padding-bottom:25px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  border-top:1px solid var(--ink);
+}
+
+.next-button {
+  border:1px solid var(--ink);
+  padding:13px 16px;
+  background:transparent;
+  font-size:11px;
+  font-weight:850;
+  text-transform:uppercase;
+  transition:background .25s,color .25s;
+}
+
+.next-button:hover {
+  background:var(--ink);
+  color:var(--paper);
+}
+
+/* CLOSING */
+
+.closing {
+  padding-top:80px;
+  padding-bottom:25px;
+}
+
+.closing h2 {
+  font-size:clamp(55px,13vw,160px);
+  line-height:.78;
+  font-weight:950;
+  letter-spacing:-.1em;
+  text-transform:uppercase;
+  margin:65px 0;
+  overflow-wrap:anywhere;
+}
+
+.closing h2 span { display:block; }
+.closing h2 span:last-child { text-align:right; }
+
+.footer-bottom {
+  border-top:1px solid var(--ink);
+  padding-top:20px;
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  font-size:10px;
+  line-height:1.8;
+}
+
+/* MOTION */
+
+@keyframes page-enter {
+  from { opacity:0; transform:translateY(15px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+@keyframes word-in {
+  from { transform:translateY(110%); }
+  to { transform:translateY(0); }
+}
+
+@keyframes marquee {
+  to { transform:translateX(-50%); }
+}
+
+@keyframes orbit {
+  to { transform:rotate(348deg); }
+}
+
+@keyframes bob {
+  0%,100% { transform:translateY(0); }
+  50% { transform:translateY(-8px); }
+}
+
+@keyframes pulse {
+  50% { opacity:.25; transform:scale(.8); }
+}
+
+@media(max-width:650px) {
+  .hero { min-height:78svh; }
+  .hero-main { padding:55px 0; }
+  .hero h1 { font-size:clamp(68px,16vw,115px); }
+  .hero-art { top:0; right:0; }
+  .hero-bottom { align-items:flex-end; }
+  .pursuits { gap:10px; }
+  .pursuit-meta { padding:10px; }
+  .pursuit-meta h3 { font-size:clamp(17px,4.6vw,27px); }
+  .card-arrow { width:29px;height:29px; }
+  .intro-grid { grid-template-columns:1fr; gap:20px; }
+  .section { padding-top:70px;padding-bottom:70px; }
+  .detail-hero { min-height:65svh; }
+  .detail-hero .detail-name { margin-top:65px; }
+  .detail-grid { gap:10px; }
+  .detail-panel { padding:15px;min-height:160px; }
+  .detail-content { padding-top:55px;padding-bottom:55px; }
+}
+
+@media(max-width:360px) {
+  .pursuits { grid-template-columns:1fr; }
+  .pursuit-visual { aspect-ratio:5/3; }
+  .status { display:none; }
+}
+
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after {
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    scroll-behavior:auto!important;
+    transition-duration:.01ms!important;
+  }
+  .reveal { opacity:1;transform:none; }
+}
+</style>
 </head>
+
 <body>
-  <div class="page">
-    <header class="top">
-      <h1>YECHIEL</h1>
-      <p>Personal Interests, Projects & Other Relevant Activities</p>
-    </header>
 
-    <div class="content">
-      <section>
-        <div class="label">Profile</div>
-        <p>Interested in mechanics, the outdoors, motor vehicles, music, and building things on the internet. Also spends time learning card magic. Usually has something new to work on.</p>
-      </section>
+<div class="progress" id="progress"></div>
 
-      <section>
-        <div class="label">Areas of Interest</div>
+<header class="topbar">
+  <a href="#home" class="logo" data-route="home">Y. / PERSONAL UNIVERSE</a>
+  <div class="top-right">
+    <span class="status"><i></i>FILE ACTIVE</span>
+    <button class="menu-button" id="topMenu">INDEX ↓</button>
+  </div>
+</header>
 
-        <div class="item">
-          <h3>Mechanics</h3>
-          <p>Works in mechanics, with practical exposure to the field. Further details regarding specific responsibilities and experience can be added.</p>
-        </div>
+<div id="app">
 
-        <div class="item">
-          <h3>Cars & Motorcycles</h3>
-          <p>An ongoing interest in cars, motorcycles, and understanding how things work.</p>
-        </div>
+<!-- ================= HOME PAGE ================= -->
 
-        <div class="item">
-          <h3>Outdoor Recreation</h3>
-          <p>Camping, hiking, and spending time in nature. Occasionally willing to trade reliable cell service for a good place to camp.</p>
-        </div>
+<div class="view active" id="page-home">
 
-        <div class="item">
-          <h3>Water & Beaches</h3>
-          <p>Swimming, beach trips, and spending time near the water.</p>
-        </div>
+  <section class="hero wrap">
+    <div class="hero-top">
+      <span class="eyebrow">Curriculum Vitae / Unofficial</span>
+      <span class="eyebrow">Edition 001 — Ongoing</span>
+    </div>
 
-        <div class="item">
-          <h3>Coding & Digital Projects</h3>
-          <p>Building websites, games, and other interactive projects. Some have a clear purpose. Others are still making their case.</p>
-        </div>
+    <div class="hero-main">
+      <div class="hero-art"><span>✳</span></div>
+      <h1>
+        <span><b>Yechiel</b></span>
+        <span><b>After</b></span>
+        <span><b>Hours.</b></span>
+      </h1>
+    </div>
 
-        <div class="item">
-          <h3>Card Magic</h3>
-          <p>Learning card magic, including techniques that depend on practice, timing, and a cooperative audience.</p>
-        </div>
+    <div class="hero-bottom">
+      <p class="hero-sub">
+        A personal archive of interests, practical skills,
+        ongoing experiments, and things worth getting
+        unnecessarily interested in.
+      </p>
+      <a href="#pursuits" class="hero-index">EXPLORE<br>↓</a>
+    </div>
+  </section>
 
-        <div class="item">
-          <h3>Music</h3>
-          <p>An ongoing interest in music and musical activities.</p>
-        </div>
-      </section>
-
-      <section>
-        <div class="label">Selected Projects</div>
-        <p class="intro">A selection of websites, games, and other interactive projects built independently.</p>
-
-        <div class="item">
-          <h3><a href="https://realyoutube0-rgb.github.io/Daveafterdarkv3/index.html" target="_blank">DAVE AFTER DARK</a></h3>
-          <p>A complete retail interface for a luxury fragrance that does not exist.</p>
-        </div>
-
-        <div class="item">
-          <h3><a href="https://realyoutube0-rgb.github.io/Am-I-cooked-/" target="_blank">Am I Cooked?</a></h3>
-          <p>A tool that takes a situation and returns how cooked it appears to be.</p>
-        </div>
-
-        <div class="item">
-          <h3><a href="https://realyoutube0-rgb.github.io/Internet-court/" target="_blank">Internet Court</a></h3>
-          <p>An interface for submitting and reviewing cases of unclear jurisdiction.</p>
-        </div>
-
-        <div class="item">
-          <h3><a href="https://pet-rock-bz8h.onrender.com/" target="_blank">Pet Rock</a></h3>
-          <p>A digital companion that requires care and provides none.</p>
-        </div>
-
-        <div class="item">
-          <h3><a href="https://realyoutube0-rgb.github.io/Deal-or-no-deal-7-/" target="_blank">Deal or No Deal</a></h3>
-          <p>A briefcase simulation with optional debt and an auditable ledger.</p>
-        </div>
-      </section>
-
-      <section>
-        <div class="label">Skills & Competencies</div>
-        <ul>
-          <li>Practical involvement in mechanics.</li>
-          <li>Building and experimenting with websites and interactive projects.</li>
-          <li>Learning and practicing card magic.</li>
-          <li>Familiarity with outdoor activities, including camping and hiking.</li>
-          <li>An ongoing interest in cars, motorcycles, and music.</li>
-          <li>Finding new projects to work on, whether or not they were necessary.</li>
-        </ul>
-      </section>
-
-      <section>
-        <div class="label">Additional Information</div>
-        <p>This résumé was created to document personal interests and activities that would otherwise have no formal record.</p>
-      </section>
+  <div class="marquee">
+    <div class="marquee-track">
+      <span>Interests & activities ✳ No fixed specialization ✳ Ongoing research ✳ </span>
+      <span>Interests & activities ✳ No fixed specialization ✳ Ongoing research ✳ </span>
     </div>
   </div>
+
+  <section class="section wrap" id="profile">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">01 / Subject file</span>
+        <h2>Somewhat<br>multidisciplinary.</h2>
+      </div>
+      <span class="eyebrow">SUBJECT: Y.</span>
+    </div>
+
+    <div class="intro-grid">
+      <p class="intro-text reveal">
+        Several interests. Multiple ongoing projects.
+        One website to document the situation.
+      </p>
+      <div class="reveal delay1">
+        <p class="body-copy">
+          This is Yechiel's personal record. It covers
+          the outdoors, mechanical work, vehicles, music,
+          coding, card magic, and various independent
+          projects.
+        </p>
+        <div class="home-stamp">PERSONAL FILE / 001</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="pursuits">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">02 / Selected pursuits</span>
+        <h2>Choose a<br>direction.</h2>
+      </div>
+      <span class="eyebrow">TAP TO OPEN ↘</span>
+    </div>
+
+    <div class="pursuits">
+
+      <button class="pursuit reveal" data-page="outdoors">
+        <div class="pursuit-visual outdoors">
+          <div class="symbol">↟</div>
+        </div>
+        <div class="pursuit-meta">
+          <div>
+            <small>01 / FIELD NOTES</small>
+            <h3>Outdoors</h3>
+          </div>
+          <span class="card-arrow">↗</span>
+        </div>
+      </button>
+
+      <button class="pursuit reveal delay1" data-page="mechanics">
+        <div class="pursuit-visual mechanics">
+          <div class="symbol">⚙</div>
+        </div>
+        <div class="pursuit-meta">
+          <div>
+            <small>02 / WORKSHOP</small>
+            <h3>Mechanics</h3>
+          </div>
+          <span class="card-arrow">↗</span>
+        </div>
+      </button>
+
+      <button class="pursuit reveal delay1" data-page="music">
+        <div class="pursuit-visual music">
+          <div class="symbol">♫</div>
+        </div>
+        <div class="pursuit-meta">
+          <div>
+            <small>03 / SOUND ARCHIVE</small>
+            <h3>Music</h3>
+          </div>
+          <span class="card-arrow">↗</span>
+        </div>
+      </button>
+
+      <button class="pursuit reveal delay2" data-page="creative">
+        <div class="pursuit-visual creative">
+          <div class="symbol">✳</div>
+        </div>
+        <div class="pursuit-meta">
+          <div>
+            <small>04 / OTHER PURSUITS</small>
+            <h3>Creative skills</h3>
+          </div>
+          <span class="card-arrow">↗</span>
+        </div>
+      </button>
+
+    </div>
+    <p class="eyebrow muted" style="margin-top:18px">
+      FOUR CATEGORIES. DETAILS WITHIN.
+    </p>
+  </section>
+
+  <section class="section wrap" id="archive">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">03 / Project archive</span>
+        <h2>Currently<br>underway.</h2>
+      </div>
+    </div>
+
+    <div class="archive">
+      <a href="#archive" class="archive-row reveal">
+        <span class="eyebrow">001</span>
+        <strong>Personal website</strong>
+        <span class="arrow">↗</span>
+      </a>
+      <a href="#archive" class="archive-row reveal">
+        <span class="eyebrow">002</span>
+        <strong>Web experiments</strong>
+        <span class="arrow">↗</span>
+      </a>
+      <a href="#archive" class="archive-row reveal">
+        <span class="eyebrow">003</span>
+        <strong>Future projects</strong>
+        <span class="arrow">↗</span>
+      </a>
+    </div>
+  </section>
+
+  <footer class="closing wrap">
+    <span class="eyebrow">End of overview</span>
+    <h2 class="reveal"><span>More to</span><span>come.</span></h2>
+    <div class="footer-bottom">
+      <span>YECHIEL / PERSONAL UNIVERSE</span>
+      <span>DOCUMENT STATUS: ONGOING</span>
+    </div>
+  </footer>
+
+</div>
+
+<!-- ================= OUTDOORS PAGE ================= -->
+
+<div class="view" id="page-outdoors" style="--accent:#c3ef87">
+
+  <section class="detail-hero wrap" style="background:#c3ef87">
+    <div class="hero-top">
+      <button class="back-button" data-back>← BACK TO INDEX</button>
+      <span class="eyebrow">01 / Field notes</span>
+    </div>
+    <div>
+      <div class="detail-symbol">↟</div>
+      <h1 class="detail-name">Outdoors.</h1>
+      <p class="detail-description">
+        Nature, camping, hiking, open water, and getting
+        outside instead of staring at a screen all day.
+      </p>
+    </div>
+    <span class="eyebrow">FIELD FILE / 001</span>
+  </section>
+
+  <section class="detail-content wrap">
+    <div class="section-head reveal">
+      <div><span class="eyebrow">01 / Areas of interest</span>
+      <h2 class="section-title">Outside<br>the lines.</h2></div>
+    </div>
+    <div class="detail-grid">
+      <figure class="detail-photo reveal">
+        <img src="images/outdoors.jpg" alt="Nature and outdoor interests" loading="lazy">
+        <figcaption>FIG. 001 / NATURE</figcaption>
+      </figure>
+      <div class="detail-panel reveal delay1">
+        <span class="eyebrow">AREA 01</span>
+        <h3>Nature & hiking</h3>
+        <p>Trails, natural landscapes, exploration, and spending time outdoors.</p>
+      </div>
+      <div class="detail-panel reveal">
+        <span class="eyebrow">AREA 02</span>
+        <h3>Camping</h3>
+        <p>Outdoor trips, equipment, preparation, and the practical side of being outside.</p>
+      </div>
+      <figure class="detail-photo reveal delay1">
+        <img src="images/water.jpg" alt="Beach and water" loading="lazy">
+        <figcaption>FIG. 002 / WATER</figcaption>
+      </figure>
+      <div class="detail-panel reveal">
+        <span class="eyebrow">AREA 03</span>
+        <h3>Beach & swimming</h3>
+        <p>Beaches, swimming, water, and spending time near the coast.</p>
+      </div>
+      <div class="detail-panel reveal delay1" style="background:var(--lime)">
+        <span class="eyebrow">CURRENT CLASSIFICATION</span>
+        <h3>Outside, preferably.</h3>
+        <p>More trips, destinations, photographs, and notes can be added here.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="detail-footer wrap">
+    <span class="eyebrow">FIELD FILE CLOSED</span>
+    <button class="next-button" data-page="mechanics">NEXT: MECHANICS ↗</button>
+  </div>
+</div>
+
+<!-- ================= MECHANICS PAGE ================= -->
+
+<div class="view" id="page-mechanics">
+
+  <section class="detail-hero wrap" style="background:#ff8a4c">
+    <div class="hero-top">
+      <button class="back-button" data-back>← BACK TO INDEX</button>
+      <span class="eyebrow">02 / Workshop</span>
+    </div>
+    <div>
+      <div class="detail-symbol">⚙</div>
+      <h1 class="detail-name">Mechanics.</h1>
+      <p class="detail-description">
+        Mechanical work, cars, motorcycles, practical
+        problem-solving, and understanding how things
+        actually work.
+      </p>
+    </div>
+    <span class="eyebrow">WORKSHOP FILE / 002</span>
+  </section>
+
+  <section class="detail-content wrap">
+    <div class="section-head reveal">
+      <div><span class="eyebrow">01 / Areas of interest</span>
+      <h2 class="section-title">Built to<br>work.</h2></div>
+    </div>
+    <div class="detail-grid">
+      <figure class="detail-photo reveal">
+        <img src="images/mechanics.jpg" alt="Mechanical work" loading="lazy">
+        <figcaption>FIG. 001 / WORKSHOP</figcaption>
+      </figure>
+      <div class="detail-panel reveal delay1">
+        <span class="eyebrow">AREA 01</span>
+        <h3>Mechanical work</h3>
+        <p>Hands-on mechanical work, tools, practical tasks, and learning how components work together.</p>
+      </div>
+      <div class="detail-panel reveal">
+        <span class="eyebrow">AREA 02</span>
+        <h3>Cars</h3>
+        <p>Automotive interests, vehicle systems, maintenance, and mechanical design.</p>
+      </div>
+      <figure class="detail-photo reveal delay1">
+        <img src="images/motorcycle.jpg" alt="Motorcycle interest" loading="lazy">
+        <figcaption>FIG. 002 / MOTORCYCLES</figcaption>
+      </figure>
+      <div class="detail-panel reveal">
+        <span class="eyebrow">AREA 03</span>
+        <h3>Motorcycles</h3>
+        <p>Motorcycles, their mechanics, design, and the engineering behind them.</p>
+      </div>
+      <div class="detail-panel reveal delay1" style="background:var(--orange)">
+        <span class="eyebrow">WORKSHOP PRINCIPLE</span>
+        <h3>Understand the machine.</h3>
+        <p>Real projects, repairs, tools, and documented experience can be added here over time.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="detail-footer wrap">
+    <span class="eyebrow">WORKSHOP FILE CLOSED</span>
+    <button class="next-button" data-page="music">NEXT: MUSIC ↗</button>
+  </div>
+</div>
+
+<!-- ================= MUSIC PAGE ================= -->
+
+<div class="view" id="page-music">
+
+  <section class="detail-hero wrap" style="background:#a5a0ff">
+    <div class="hero-top">
+      <button class="back-button" data-back>← BACK TO INDEX</button>
+      <span class="eyebrow">03 / Sound archive</span>
+    </div>
+    <div>
+      <div class="detail-symbol">♫</div>
+      <h1 class="detail-name">Music.</h1>
+      <p class="detail-description">
+        Instruments, musical interests, electronic sounds,
+        creative experiments, and the ongoing pursuit
+        of making something sound right.
+      </p>
+    </div>
+    <span class="eyebrow">SOUND FILE / 003</span>
+  </section>
+
+  <section class="detail-content wrap">
+    <div class="section-head reveal">
+      <div><span class="eyebrow">01 / Areas of interest</span>
+      <h2 class="section-title">Sound in<br>progress.</h2></div>
+    </div>
+    <div class="detail-grid">
+      <figure class="detail-photo reveal">
+        <img src="images/music.jpg" alt="Music and instruments" loading="lazy">
+        <figcaption>FIG. 001 / INSTRUMENTS</figcaption>
+      </figure>
+      <div class="detail-panel reveal delay1">
+        <span class="eyebrow">AREA 01</span>
+        <h3>Playing music</h3>
+        <p>Musical instruments, playing, developing technique, and exploring sounds.</p>
+      </div>
+      <div class="detail-panel reveal">
+        <span class="eyebrow">AREA 02</span>
+        <h3>Electronic music</h3>
+        <p>Sound design, backing tracks, electronic arrangements, and musical experimentation.</p>
+      </div>
+      <figure class="detail-photo reveal delay1">
+        <img src="images/music-studio.jpg" alt="Music production setup" loading="lazy">
+        <figcaption>FIG. 002 / EXPERIMENTS</figcaption>
+      </figure>
+      <div class="detail-panel reveal">
+        <span class="eyebrow">AREA 03</span>
+        <h3>Creative projects</h3>
+        <p>Recording ideas, experimenting with arrangements, and developing original material.</p>
+      </div>
+      <div class="detail-panel reveal delay1" style="background:var(--pink)">
+        <span class="eyebrow">CURRENT STATUS</span>
+        <h3>Work in progress.</h3>
+        <p>Future recordings, musical projects, and instrument details belong here.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="detail-footer wrap">
+    <span class="eyebrow">SOUND FILE CLOSED</span>
+    <button class="next-button" data-page="creative">NEXT: CREATIVE SKILLS ↗</button>
+  </div>
+</div>
+
+<!-- ================= CREATIVE SKILLS PAGE ================= -->
+
+<div class="view" id="page-creative">
+
+  <section class="detail-hero wrap" style="background:#ff9ecb">
+    <div class="hero-top">
+      <button class="back-button" data-back>← BACK TO INDEX</button>
+      <span class="eyebrow">04 / Creative archive</span>
+    </div>
+    <div>
+      <div class="detail-symbol">✳</div>
+      <h1 class="detail-name">Creative.</h1>
+      <p class="detail-description">
+        Coding, card magic, independent projects,
+        and skills that don't fit neatly into one category.
+      </p>
+    </div>
+    <span class="eyebrow">CREATIVE FILE / 004</span>
+  </section>
+
+  <section class="detail-content wrap">
+    <div class="section-head reveal">
+      <div><span class="eyebrow">01 / Areas of interest</span>
+      <h2 class="section-title">Learn.<br>Make.<br>Repeat.</h2></div>
+    </div>
+    <div class="detail-grid">
+      <figure class="detail-photo reveal">
+        <img src="images/coding.jpg" alt="Coding and website projects" loading="lazy">
+        <figcaption>FIG. 001 / CODE</figcaption>
+      </figure>
+      <div class="detail-panel reveal delay1">
+        <span class="eyebrow">AREA 01</span>
+        <h3>Coding</h3>
+        <p>Building websites, experimenting with code, and developing interactive personal projects.</p>
+      </div>
+      <div class="detail-panel reveal">
+        <span class="eyebrow">AREA 02</span>
+        <h3>Card magic</h3>
+        <p>Card handling, sleight of hand, techniques, presentation, and practicing effects.</p>
+      </div>
+      <figure class="detail-photo reveal delay1">
+        <img src="images/magic.jpg" alt="Playing cards" loading="lazy">
+        <figcaption>FIG. 002 / CARD MAGIC</figcaption>
+      </figure>
+      <div class="detail-panel reveal">
+        <span class="eyebrow">AREA 03</span>
+        <h3>Independent builds</h3>
+        <p>Small websites, interactive ideas, experiments, and projects made to see if an idea works.</p>
+      </div>
+      <div class="detail-panel reveal delay1" style="background:var(--blue);color:white">
+        <span class="eyebrow">GENERAL APPROACH</span>
+        <h3>Try it. Figure it out.</h3>
+        <p>New projects and additional skills can be documented here as they develop.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="detail-footer wrap">
+    <span class="eyebrow">CREATIVE FILE CLOSED</span>
+    <button class="next-button" data-page="home">RETURN TO INDEX ↗</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+/* PAGE NAVIGATION */
+
+const views = [...document.querySelectorAll(".view")];
+let currentPage = "home";
+let historyStack = [];
+
+function showPage(name, pushHistory = true) {
+  const target = document.getElementById("page-" + name);
+  if (!target) return;
+
+  if (pushHistory && currentPage !== name) {
+    historyStack.push(currentPage);
+    history.pushState({ page:name }, "", "#" + name);
+  }
+
+  currentPage = name;
+
+  views.forEach(view => view.classList.remove("active"));
+  target.classList.add("active");
+
+  window.scrollTo({ top:0, behavior:"instant" });
+
+  document.getElementById("progress").style.width = "0%";
+
+  target.querySelectorAll(".reveal").forEach(el => {
+    el.classList.remove("in");
+  });
+
+  observeReveals(target);
+
+  const titles = {
+    home:"Yechiel — Personal Universe",
+    outdoors:"Outdoors — Yechiel",
+    mechanics:"Mechanics — Yechiel",
+    music:"Music — Yechiel",
+    creative:"Creative Skills — Yechiel"
+  };
+
+  document.title = titles[name] || titles.home;
+}
+
+document.querySelectorAll("[data-page]").forEach(button => {
+  button.addEventListener("click", () => {
+    showPage(button.dataset.page);
+  });
+});
+
+document.querySelectorAll("[data-back]").forEach(button => {
+  button.addEventListener("click", () => {
+    if (historyStack.length) {
+      history.back();
+    } else {
+      showPage("home", false);
+      history.replaceState({page:"home"}, "", "#home");
+    }
+  });
+});
+
+document.querySelectorAll('[data-route="home"]').forEach(link => {
+  link.addEventListener("click", event => {
+    event.preventDefault();
+    showPage("home");
+  });
+});
+
+window.addEventListener("popstate", () => {
+  const name = location.hash.replace("#","") || "home";
+  historyStack.pop();
+  showPage(name, false);
+});
+
+/* OPEN THE PAGE SPECIFIED IN THE URL */
+
+const initial = location.hash.replace("#","");
+if (document.getElementById("page-" + initial)) {
+  showPage(initial, false);
+}
+
+/* SCROLL REVEALS */
+
+let revealObserver;
+
+function observeReveals(root = document) {
+  if (revealObserver) revealObserver.disconnect();
+
+  const elements = root.querySelectorAll(".reveal");
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      !("IntersectionObserver" in window)) {
+    elements.forEach(el => el.classList.add("in"));
+    return;
+  }
+
+  revealObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("in");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold:.1, rootMargin:"0px 0px -25px 0px" });
+
+  elements.forEach(el => revealObserver.observe(el));
+}
+
+observeReveals();
+
+/* SCROLL PROGRESS */
+
+let scrollScheduled = false;
+
+window.addEventListener("scroll", () => {
+  if (scrollScheduled) return;
+  scrollScheduled = true;
+
+  requestAnimationFrame(() => {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    const percent = max > 0 ? scrollY / max * 100 : 0;
+
+    document.getElementById("progress").style.width =
+      percent + "%";
+
+    scrollScheduled = false;
+  });
+}, {passive:true});
+
+/* INDEX BUTTON */
+
+document.getElementById("topMenu").addEventListener("click", () => {
+  if (currentPage !== "home") {
+    showPage("home");
+    return;
+  }
+
+  document.getElementById("pursuits").scrollIntoView({
+    behavior:"smooth"
+  });
+});
+</script>
+
 </body>
 </html>
